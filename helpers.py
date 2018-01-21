@@ -173,7 +173,7 @@ def dbscan_func(G, epsilon, mn, labels=None, label_value=None):
     plt.show()
     return labels1
 
- def compute_weight(sat1,sat2):
+def compute_weight(sat1,sat2):
     """
     Compute the weight of the edge between two satellites. The weight is defined as the common surface overflown
     by both satellites
