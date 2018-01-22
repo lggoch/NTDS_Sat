@@ -393,11 +393,12 @@ def print_error_graph(error, file_name=None):
     ax1.grid(b=True, which='major', linestyle='-')
     ax1.grid(b=True, which='minor', linestyle='--')
 
-    ax1.set_ylabel("Good labelling proportion (%)")
     l1, = ax1.plot(x, y1, 'b', label="Measured Errors")
 
     legend1 = plt.legend([l1], ["Measured Errors"], loc=1)
 
+    ax1.set_ylabel("Good labelling proportion (%)")
+    ax1.set_xlabel("Labelized Nodes (%)")
     ax2 = ax1.twinx()
     ax2.set_ylabel('Number of Nodes')
     ax2.set_yscale("log")
@@ -407,7 +408,6 @@ def print_error_graph(error, file_name=None):
     l4, = ax2.plot(x, y4, 'r--', label="Total Bad Label")
     l5, = ax2.plot(x, y5, 'k--', label="Total Label")
 
-    plt.xlabel("Labelized Nodes (%)")
     plt.title("Result analysis")
     plt.legend([l2, l3, l4, l5], ["Total Unknown Label", "Total Good Label", "Total Bad Label", "Total Label"],  loc=3)
     if file_name:
