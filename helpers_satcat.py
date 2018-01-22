@@ -377,6 +377,7 @@ def print_error_graph(error, file_name=None):
     """Function to print the errors in a graph"""
     x=list(error.keys())
     y1=[error[key]["good_classification_percent"]*100 for key in error.keys()]
+    y6=[(1-error[key]["good_classification_percent"])*100 for key in error.keys()]
     y2=[error[key]["total_unknown_label"] for key in error.keys()]
     y3=[error[key]["total_good_label"] for key in error.keys()]
     y4=[error[key]["total_bad_label"] for key in error.keys()]
@@ -393,9 +394,10 @@ def print_error_graph(error, file_name=None):
     ax1.grid(b=True, which='major', linestyle='-')
     ax1.grid(b=True, which='minor', linestyle='--')
 
-    l1, = ax1.plot(x, y1, 'b', label="Measured Errors")
-
-    legend1 = plt.legend([l1], ["Measured Errors"], loc=1)
+    l1, = ax1.plot(x, y1, 'b', label="Good labels")
+    l6, = ax1.plot(x, y6, 'm', label="Errors (bad label or unknown)")
+    
+    legend1 = plt.legend([l1, l6], ["Good labels", "Errors (bad label or unknown)"], loc=1)
 
     ax1.set_ylabel("Good labelling proportion (%)")
     ax1.set_xlabel("Labelized Nodes (%)")
@@ -408,7 +410,7 @@ def print_error_graph(error, file_name=None):
     l4, = ax2.plot(x, y4, 'r--', label="Total Bad Label")
     l5, = ax2.plot(x, y5, 'k--', label="Total Label")
 
-    plt.title("Result analysis")
+    plt.title("Result analysis\nleft axis is for full lines, right for dotted lines")
     plt.legend([l2, l3, l4, l5], ["Total Unknown Label", "Total Good Label", "Total Bad Label", "Total Label"],  loc=3)
     if file_name:
         plt.savefig('fig/{}.png'.format(file_name))
