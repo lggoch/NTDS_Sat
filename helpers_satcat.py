@@ -92,7 +92,7 @@ def get_weights_from_distance(distances, kernel_width_percentile=0.5):
         weights[index][index] = 0
     return weights
 
-def sparse_weights(weights, neighbors=100, epsilon = 1e-8):
+def sparse_weights(weights: object, neighbors: object = 100, epsilon: object = 1e-8) -> object:
     """Function to sparsify the weight matrix
        It will set to zero the weights that are not in "neighbors"
        It will set to zero the weights that are smaller than "epsilon"
@@ -143,7 +143,7 @@ def create_graph_from_weights(weights, satcat_df):
     """
     graph = nx.Graph(weights)
     norad_values = list(satcat_df.index)
-    for node in graph.nodes:
+    for node in graph.nodes():
         graph.node[node]['NORAD'] = norad_values[node]
     return graph
 
@@ -152,7 +152,7 @@ def get_nodes_per_site(graph, satcat_df):
        This assumes that there's at least two launch sites
     """
     nodes_per_site = {site:[] for site in satcat_df.num_launch_site.unique()}
-    for node in graph.nodes:
+    for node in graph.nodes():
         norad = graph.node[node]['NORAD']
         launch_site = satcat_df.loc[norad, "num_launch_site"]
         nodes_per_site[launch_site].append(node)
@@ -176,14 +176,14 @@ def draw_graph(graph, axes, satcat_df, name=None):
 
 def remove_lonely_nodes(graph, minimum_degree = 0):
     nodes_to_drop = []
-    for node in tqdm(graph.nodes):
+    for node in tqdm(graph.nodes()):
         if graph.degree(node) <= minimum_degree:
             nodes_to_drop.append(node)
     graph.remove_nodes_from(nodes_to_drop)
     return graph
 
 def get_nodes_nbr(graphs):
-    return [len(graph.nodes) for graph in graphs]
+    return [len(graph.nodes()) for graph in graphs]
 
 def print_subgraphs_nodes_dist(subgraphs, axes, name=None):
     nodes_nbr = get_nodes_nbr(subgraphs)
@@ -216,7 +216,7 @@ def get_big_subgraphs_index(subgraphs, max_nodes):
     """
     big_subgraphs_index = []
     for index, graph in enumerate(subgraphs):
-        if len(graph.nodes) > max_nodes:
+        if len(graph.nodes()) > max_nodes:
             big_subgraphs_index.append(index)
     return big_subgraphs_index
 
@@ -270,7 +270,7 @@ def create_labeled_df(satcat_df, percent_of_labeled):
 
 def get_label_probs(label_df, subgraph):
     """Get the probability of each label for a specific subgraph"""
-    subgraph_df = label_df.loc[[subgraph.node[node]['NORAD'] for node in subgraph.nodes]]
+    subgraph_df = label_df.loc[[subgraph.node[node]['NORAD'] for node in subgraph.nodes()]]
     labeled_subgraph_df = subgraph_df[subgraph_df.is_labeled == 1]
     values_per_label = labeled_subgraph_df.real_label.value_counts()
     probability_dict = {}
@@ -280,7 +280,7 @@ def get_label_probs(label_df, subgraph):
 
 def set_subgraph_label(label_df, subgraph, label):
     """Use to set all the labels of a subgraph to the same value"""
-    for node in subgraph.nodes:
+    for node in subgraph.nodes():
         norad = subgraph.node[node]["NORAD"]
         if label_df.loc[norad, "is_labeled"] == 0:
             label_df.loc[norad, "label"] = label
@@ -300,7 +300,7 @@ def get_subgraphs_from_weights(weights, reduced_satcat_df, MAXIMUM_SUBGRAPH_NODE
         connected_subgraphs.append(nx.Graph(subgraph))
 
 
-    maximum_subgraph_nodes = len(graph.nodes)*MAXIMUM_SUBGRAPH_NODES_PERCENT
+    maximum_subgraph_nodes = len(graph.nodes())*MAXIMUM_SUBGRAPH_NODES_PERCENT
 
     # Get the index of the big subgraphs
     big_subgraphs_index = get_big_subgraphs_index(connected_subgraphs,
